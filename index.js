@@ -6,7 +6,7 @@ const svg = canvas.append('svg')
 
 const margin =
   {
-    top: 50,
+    top: 90,
     right: 60,
     bottom: 20,
     left: 60
@@ -44,6 +44,7 @@ function getchart(data) {
     node.min = d3.min(arrayOfValues)
     arrayOfValues.forEach((d) => sum += parseFloat(d))
     node.avg = sum / arrayOfValues.length
+    node.cat = cat[0].IncomeGroup
     quantiledArray.push(node)
   }
   return quantiledArray
@@ -60,6 +61,15 @@ function drawChart(data){
   let min = d3.min(array_num)
 
   const nodes = getchart(data)
+  console.log(nodes)
+
+  //ToolTip
+  var tooltip = d3.select("body")
+  .append("div")
+   .style("position", "absolute")
+   .style("z-index", "10")
+   .style("visibility", "hidden")
+  
 
   //scaleLinner
  const x_scaleLinear = d3.scaleLinear()
@@ -67,7 +77,6 @@ function drawChart(data){
        .range([0, graphWidth]);
   //base rect
   const rect = mainCanvas.selectAll('rect')
-
 
    rect
     .data(nodes)
@@ -80,6 +89,127 @@ function drawChart(data){
     .attr('rx',20)
     .attr('ry',20)
     .attr('stroke', 'gray')
-    .attr('fill' , 'lightgray')  
+    .attr('fill' , 'lightgray') 
+    .on("mouseover", function(event){
+      console.log(event)
+      d3.select(this)
+         .transition()
+         .duration(100)
+         .style('opacity', '0.7')
+      tooltip.html( d => {return '<p>First Quarter: ' + '<span style="color:orange"></span>' + event.target.__data__.q1 + '</p>' + 
+      '<p>  Secend Quarter: ' + '<span style="color:orangered"></span>' + event.target.__data__.q3 + '</p>' + 
+      '<p> Avrage: '+event.target.__data__.avg+'</p>' +
+      '<p> Median: '+event.target.__data__.median+'</p>' +
+      '<p> Max: '+event.target.__data__.max+'</p>' +
+      '<p> Min: '+event.target.__data__.min+'</p>' 
+
+    })
+      tooltip.style("visibility", "visible")
+      tooltip.style('opacity', '0.9')
+     
+      tooltip.style('color', 'darkblue')
+      tooltip.attr('class', 'tooltip')
+
+    })
+    .on("mouseout", function(event){
+      d3.select(this)
+      .transition()
+      .duration(100)
+      .style('opacity', '1')
+      tooltip.style("visibility", "hidden");
+    })
+    .on("mousemove", function(event){ tooltip.style("top", (event.pageY + 10)+"px").style("left",(event.pageX+25)+"px");})
+
+  //lines
+
+  //q1
+  const q1line = mainCanvas.selectAll('line')
+
+  q1line
+   .data(nodes)
+   .enter()
+   .append('line') 
+   .attr('x1', (d) => x_scaleLinear(d.q1))
+   .attr('x2', (d) => x_scaleLinear(d.q1))
+   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
+   .attr('stroke', 'black')
   
+  //q3
+    /*
+    q3line
+   .data(nodes)
+   .enter()
+   .append('line') 
+   .attr('x1', (d) => x_scaleLinear(d.q3))
+   .attr('x2', (d) => x_scaleLinear(d.q3))
+   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
+   .attr('stroke', 'black')
+    */
+  //median
+    /*
+    medianline
+   .data(nodes)
+   .enter()
+   .append('line') 
+   .attr('x1', (d) => x_scaleLinear(d.median))
+   .attr('x2', (d) => x_scaleLinear(d.median))
+   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
+   .attr('stroke', 'black')
+    */
+
+
+  //rect of q1, q3, median
+    //q1 and median
+    /*
+  q1rect
+    .data(nodes)
+    .enter()
+    .append('rect')
+    .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
+    .attr('x', (d) => x_scaleLinear(d.median))  
+    .attr('height', (graphHeight/4) / nodes.length )
+    .attr('width', (d) => x_scaleLinear(d.q3)-x_scaleLinear(d.median))
+    .attr('rx',10)
+    .attr('ry',10)
+    .attr('stroke', 'gray')
+    .attr('fill' , 'red') 
+
+  */
+
+  //median and q3
+    /*
+  q1rect
+    .data(nodes)
+    .enter()
+    .append('rect')
+    .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
+    .attr('x', (d) => x_scaleLinear(d.q1))  
+    .attr('height', (graphHeight/4) / nodes.length )
+    .attr('width', (d) => x_scaleLinear(d.median)-x_scaleLinear(d.q1))
+    .attr('rx',10)
+    .attr('ry',10)
+    .attr('stroke', 'gray')
+    .attr('fill' , 'purple') 
+
+  */
+
+  //texts
+   
+  //category type
+  const typeOfCat = mainCanvas.selectAll('text')
+
+  typeOfCat
+    .data(nodes)
+    .enter()
+    .append('text') 
+    .html(d => d.cat)
+    .attr('text-anchor','middle')
+    .attr('fill','gray')
+    .attr('font-size','2vw')
+    .attr('x',x_scaleLinear(max)/2)
+    .attr('y',(d, i) => graphHeight*(i)/nodes.length - ((graphHeight/4) / nodes.length)/2)
+
 }
