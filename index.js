@@ -33,8 +33,8 @@ function getchart(data) {
   let newClassify = Object.fromEntries(classOfCat)
   const categoriesArray = Object.values(newClassify)
   let quantiledArray =[]
-  let sum = 0
   for(let cat of categoriesArray){
+    let sum = 0
     let arrayOfValues = cat.map(d => parseFloat(d.expectancy))
     let node = {}
     node.q1 = d3.quantile(arrayOfValues, 0.25)
