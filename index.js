@@ -75,12 +75,15 @@ function drawChart(data){
  const x_scaleLinear = d3.scaleLinear()
        .domain([min, max])
        .range([0, graphWidth]);
-  //base rect
-  const rect = mainCanvas.selectAll('rect')
 
-   rect
-    .data(nodes)
-    .enter()
+  const barsGraph = mainCanvas.selectAll('g')
+      .data(nodes)
+      .enter()
+      .append('g')
+      console.log(barsGraph)
+
+  //base rect
+  const rect = barsGraph
     .append('rect')
     .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
     .attr('x', 0)  
@@ -90,6 +93,83 @@ function drawChart(data){
     .attr('ry',20)
     .attr('stroke', 'gray')
     .attr('fill' , 'lightgray') 
+    
+
+  //lines
+
+  //q1
+  var q1line = barsGraph
+   .append('line') 
+   .attr('x1', (d) => x_scaleLinear(d.q1))
+   .attr('x2', (d) => x_scaleLinear(d.q1))
+   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
+   .attr('stroke', 'black')
+  
+  //q3
+    
+  var q3line = barsGraph
+   
+   .append('line') 
+   .attr('x1', (d) => x_scaleLinear(d.q3))
+   .attr('x2', (d) => x_scaleLinear(d.q3))
+   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
+   .attr('stroke', 'black')
+    
+  //median
+    
+  var medianline = barsGraph
+   .append('line') 
+   .attr('x1', (d) => x_scaleLinear(d.median))
+   .attr('x2', (d) => x_scaleLinear(d.median))
+   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
+   .attr('stroke', 'red')
+    
+
+
+  //rect of q1, q3, median
+
+  //q1 and median
+    
+  var q1rect = barsGraph
+    .append('rect')
+    .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
+    .attr('x', (d) => x_scaleLinear(d.median))  
+    .attr('height', (graphHeight/4) / nodes.length )
+    .attr('width', (d) => x_scaleLinear(d.q3)-x_scaleLinear(d.median))
+    .attr('stroke', 'gray')
+    .attr('fill' , 'red') 
+
+  
+
+  //median and q3
+  
+  var q2rect = barsGraph
+    .append('rect')
+    .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
+    .attr('x', (d) => x_scaleLinear(d.q1))  
+    .attr('height', (graphHeight/4) / nodes.length )
+    .attr('width', (d) => x_scaleLinear(d.median)-x_scaleLinear(d.q1))
+    .attr('stroke', 'gray')
+    .attr('fill' , 'purple') 
+
+  
+
+  //texts
+   
+  //category type
+  var typeOfCat = barsGraph
+    .append('text') 
+    .html(d => d.cat)
+    .attr('text-anchor','middle')
+    .attr('fill','gray')
+    .attr('font-size','2vw')
+    .attr('x',x_scaleLinear(max)/2)
+    .attr('y',(d, i) => graphHeight*(i)/nodes.length - ((graphHeight/4) / nodes.length)/2)
+
+    barsGraph
     .on("mouseover", function(event){
       console.log(event)
       d3.select(this)
@@ -119,97 +199,5 @@ function drawChart(data){
       tooltip.style("visibility", "hidden");
     })
     .on("mousemove", function(event){ tooltip.style("top", (event.pageY + 10)+"px").style("left",(event.pageX+25)+"px");})
-
-  //lines
-
-  //q1
-  const q1line = mainCanvas.selectAll('line')
-
-  q1line
-   .data(nodes)
-   .enter()
-   .append('line') 
-   .attr('x1', (d) => x_scaleLinear(d.q1))
-   .attr('x2', (d) => x_scaleLinear(d.q1))
-   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
-   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
-   .attr('stroke', 'black')
-  
-  //q3
-    /*
-    q3line
-   .data(nodes)
-   .enter()
-   .append('line') 
-   .attr('x1', (d) => x_scaleLinear(d.q3))
-   .attr('x2', (d) => x_scaleLinear(d.q3))
-   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
-   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
-   .attr('stroke', 'black')
-    */
-  //median
-    /*
-    medianline
-   .data(nodes)
-   .enter()
-   .append('line') 
-   .attr('x1', (d) => x_scaleLinear(d.median))
-   .attr('x2', (d) => x_scaleLinear(d.median))
-   .attr('y1', (d, i) =>  (graphHeight*(i)/nodes.length))
-   .attr('y2', (d, i) =>  (graphHeight*(i)/nodes.length) + (graphHeight/4) / nodes.length )
-   .attr('stroke', 'black')
-    */
-
-
-  //rect of q1, q3, median
-    //q1 and median
-    /*
-  q1rect
-    .data(nodes)
-    .enter()
-    .append('rect')
-    .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
-    .attr('x', (d) => x_scaleLinear(d.median))  
-    .attr('height', (graphHeight/4) / nodes.length )
-    .attr('width', (d) => x_scaleLinear(d.q3)-x_scaleLinear(d.median))
-    .attr('rx',10)
-    .attr('ry',10)
-    .attr('stroke', 'gray')
-    .attr('fill' , 'red') 
-
-  */
-
-  //median and q3
-    /*
-  q1rect
-    .data(nodes)
-    .enter()
-    .append('rect')
-    .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
-    .attr('x', (d) => x_scaleLinear(d.q1))  
-    .attr('height', (graphHeight/4) / nodes.length )
-    .attr('width', (d) => x_scaleLinear(d.median)-x_scaleLinear(d.q1))
-    .attr('rx',10)
-    .attr('ry',10)
-    .attr('stroke', 'gray')
-    .attr('fill' , 'purple') 
-
-  */
-
-  //texts
-   
-  //category type
-  const typeOfCat = mainCanvas.selectAll('text')
-
-  typeOfCat
-    .data(nodes)
-    .enter()
-    .append('text') 
-    .html(d => d.cat)
-    .attr('text-anchor','middle')
-    .attr('fill','gray')
-    .attr('font-size','2vw')
-    .attr('x',x_scaleLinear(max)/2)
-    .attr('y',(d, i) => graphHeight*(i)/nodes.length - ((graphHeight/4) / nodes.length)/2)
 
 }
