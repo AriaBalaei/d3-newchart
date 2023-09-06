@@ -82,19 +82,30 @@ function drawChart(data){
       .append('g')
       console.log(barsGraph)
 
+  //main base
+   var mainbase = barsGraph
+   .append('rect')
+   .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
+   .attr('x', 0)  
+   .attr('height', (graphHeight/4) / nodes.length )
+   .attr('width', x_scaleLinear(max))
+   .attr('rx',20)
+   .attr('ry',20)
+   .attr('stroke', 'gray')
+   .attr('fill' , 'gray') 
   //base rect
   const rect = barsGraph
     .append('rect')
     .attr('y', (d, i) =>  (graphHeight*(i)/nodes.length))
-    .attr('x', 0)  
+    .attr('x',d => x_scaleLinear(d.min))  
     .attr('height', (graphHeight/4) / nodes.length )
-    .attr('width', x_scaleLinear(max) )
+    .attr('width', d => x_scaleLinear(d.max) - x_scaleLinear(d.min) )
     .attr('rx',20)
     .attr('ry',20)
-    .attr('stroke', 'gray')
+    .attr('stroke', 'black')
     .attr('fill' , 'lightgray') 
     
-
+  
   //lines
 
   //q1
