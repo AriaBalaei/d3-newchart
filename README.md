@@ -1,6 +1,6 @@
 # d3-newchart
-![image](https://github.com/AriaBalaei/d3-newchart/assets/141871802/4a98395c-87c6-4756-8f31-b403ec6480dd)
 
+![image](https://github.com/AriaBalaei/d3-newchart/assets/141871802/d02292fc-5e15-4eea-8437-a85e407aff91)
 
 
 ## How to run
